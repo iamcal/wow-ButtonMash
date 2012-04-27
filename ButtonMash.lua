@@ -10,10 +10,13 @@ ButtonMash.default_options = {
 };
 
 ButtonMash.enabled_for_class = false;
+ButtonMash.enabled_for_spec = false;
 ButtonMash.current_talent_spec = 0;
-ButtonMash.start_w = 204;
-ButtonMash.start_h = 143;
 
+ButtonMash.start_w = 200;
+ButtonMash.start_h = 200;
+ButtonMash.buttons = {};
+ButtonMash.misc_counter = 0;
 
 --
 -- load and save prefs
@@ -69,10 +72,17 @@ function ButtonMash.OnUpdate()
 		if (ButtonMash.DestroyUI) then
 			ButtonMash.DestroyUI();
 		end
+
 		ButtonMash.current_talent_spec = spec_now;
+		ButtonMash.enabled_for_spec = false;
+
 		if (ButtonMash.CreateUI) then
 			ButtonMash.CreateUI();
 		end
+	end
+
+	if (ButtonMash.enabled_for_spec) then
+		return;
 	end
 
 	if (ButtonMashPrefs.hide) then 
@@ -131,9 +141,9 @@ function ButtonMash.CreateUIFrame()
 	ButtonMash.UIFrame:SetHeight(ButtonMash.start_h);
 
 	-- make it black
-	--ButtonMash.UIFrame.texture = ButtonMash.UIFrame:CreateTexture();
-	--ButtonMash.UIFrame.texture:SetAllPoints(ButtonMash.UIFrame);
-	--ButtonMash.UIFrame.texture:SetTexture(0, 0, 0);
+	ButtonMash.UIFrame.texture = ButtonMash.UIFrame:CreateTexture();
+	ButtonMash.UIFrame.texture:SetAllPoints(ButtonMash.UIFrame);
+	ButtonMash.UIFrame.texture:SetTexture(0, 0, 0, 0);
 
 	-- position it
 	ButtonMash.UIFrame:SetPoint(_G.ButtonMashPrefs.frameRef, _G.ButtonMashPrefs.frameX, _G.ButtonMashPrefs.frameY);
@@ -165,13 +175,22 @@ function ButtonMash.CreateUIFrame()
 	ButtonMash.SetFontSize(ButtonMash.Label, 10);
 end
 
-function ButtonMash.CreateButton(parent, x, y, w, h, texture)
+function ButtonMash.ResizeUIFrame(w, h)
+
+	ButtonMash.UIFrame:SetWidth(w);
+	ButtonMash.UIFrame:SetHeight(h);
+
+	ButtonMash.Cover:SetWidth(w);
+	ButtonMash.Cover:SetHeight(h);
+end
+
+function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 
 	ButtonMash.misc_counter = ButtonMash.misc_counter + 1;
 	local name = "ButtonMashBtn"..ButtonMash.misc_counter;
 
 	-- the actual button
-	local b = CreateFrame("Button", name, parent);
+	local b = CreateFrame("Button", name, ButtonMash.UIFrame);
 	b:SetPoint("TOPLEFT", x, 0-y)
 	b:SetWidth(w)
 	b:SetHeight(h)
@@ -275,7 +294,7 @@ function ButtonMash.CreateButton(parent, x, y, w, h, texture)
 		end
 	end
 
-
+	ButtonMash.buttons[short_id] = b;
 
 	return b;
 end
