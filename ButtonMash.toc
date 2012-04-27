@@ -1,0 +1,9 @@
+## Interface: 40300
+## Title : ButtonMash
+## Notes: Rotation timers for DPS
+## Author: Cal Henderson (Bees on Hyjal-US)
+## Version: 1.0
+## Dependencies: 
+## SavedVariablesPerCharacter: ButtonMashPrefs
+
+ButtonMash.lua
