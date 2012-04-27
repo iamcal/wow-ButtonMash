@@ -7,3 +7,5 @@
 ## SavedVariablesPerCharacter: ButtonMashPrefs
 
 ButtonMash.lua
+
+class_dk.lua
