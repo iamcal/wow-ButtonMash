@@ -81,7 +81,7 @@ function ButtonMash.OnUpdate()
 		end
 	end
 
-	if (ButtonMash.enabled_for_spec) then
+	if (not ButtonMash.enabled_for_spec) then
 		return;
 	end
 
