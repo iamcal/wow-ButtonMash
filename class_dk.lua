@@ -7,7 +7,6 @@ function ButtonMash.CreateUI()
 	if (ButtonMash.current_talent_spec == 2) then
 
 		ButtonMash.enabled_for_spec = true;
-		print("ButtonMash: building UI");
 
 		ButtonMash.ResizeUIFrame(50, 50);
 		--ButtonMash.UIFrame.texture:SetTexture(1, 0, 0);
@@ -20,9 +19,6 @@ function ButtonMash.DestroyUI()
 
 	if (ButtonMash.current_talent_spec == 2) then
 
-		print("ButtonMash: removing UI");
-
-		--ButtonMash.DestroyButtons();
-
+		ButtonMash.DestroyButtons();
 	end
 end;

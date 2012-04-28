@@ -324,6 +324,24 @@ function ButtonMash.OnClick(self, aButton)
 	end
 end
 
+function ButtonMash.DestroyButtons()
+
+	--
+	-- this currently bloats if you constantly switch specs.
+	-- the solution is to keep a pool of free button frames.
+	--
+
+	local i;
+
+	for i in pairs(ButtonMash.buttons) do
+
+		ButtonMash.buttons[i]:Hide();
+		ButtonMash.buttons[i]:SetParent(nil);
+	end
+
+	ButtonMash.buttons = {};
+end
+
 function ButtonMash.SetButtonState(btn, state, spellName)
 
 	-- energy state overlay
