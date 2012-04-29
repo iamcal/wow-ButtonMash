@@ -71,13 +71,17 @@ function ButtonMash.OnUpdate()
 	if (spec_now ~= ButtonMash.current_talent_spec) then
 		if (ButtonMash.DestroyUI) then
 			ButtonMash.DestroyUI();
+			ButtonMash.UIFrame:Hide();
 		end
 
 		ButtonMash.current_talent_spec = spec_now;
 		ButtonMash.enabled_for_spec = false;
 
 		if (ButtonMash.CreateUI) then
-			ButtonMash.CreateUI();
+			local created = ButtonMash.CreateUI();
+			if (created and not ButtonMashPrefs.hide) then
+				ButtonMash.UIFrame:Show();
+			end
 		end
 	end
 
@@ -173,6 +177,8 @@ function ButtonMash.CreateUIFrame()
 	ButtonMash.Label:SetText(" ");
 	ButtonMash.Label:SetTextColor(1,1,1,1);
 	ButtonMash.SetFontSize(ButtonMash.Label, 10);
+
+	ButtonMash.UIFrame:Hide();
 end
 
 function ButtonMash.ResizeUIFrame(w, h)

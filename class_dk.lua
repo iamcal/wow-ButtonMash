@@ -19,7 +19,16 @@ function ButtonMash.CreateUI()
 		ButtonMash.CreateButton('ps', 41*1, 0, 40, 40, [[Interface\Icons\spell_deathknight_empowerruneblade]]);
 		ButtonMash.CreateButton('ob', 41*2, 0, 40, 40, [[Interface\Icons\spell_deathknight_classicon]]);
 		ButtonMash.CreateButton('fs', 41*3, 0, 40, 40, [[Interface\Icons\spell_deathknight_empowerruneblade2]]);
+
+		ButtonMash.buttons['it'].label:SetText("1");
+		ButtonMash.buttons['ps'].label:SetText("2");
+		ButtonMash.buttons['ob'].label:SetText("3");
+		ButtonMash.buttons['fs'].label:SetText("4");
+
+		return true;
 	end
+
+	return false;
 end;
 
 function ButtonMash.DestroyUI()
