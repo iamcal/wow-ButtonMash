@@ -235,6 +235,39 @@ function ButtonMash.UpdateFrame()
 		end
 
 
+		-- trinkets & other cooldowns
+
+		local cds = ButtonMash.GetCooldowns();
+
+		local cd_width = (41 * cds.count) - 1;
+		local cd_left = (102 - (cd_width / 2)) - 41;
+
+		local i;
+		for i=1,ButtonMash.combat_rogue.cd_buttons_max do
+
+			local btn = ButtonMash.buttons['cd'..i];
+			if (i <= cds.count) then
+				local info = cds.abilities[i];
+
+				local texture, start, duration, enable;
+
+				if (info.type == 'item') then
+					_, _, _, _, _, _, _, _, _, texture, _ = GetItemInfo(info.id);
+					start, duration, enable = GetItemCooldown(info.id);
+				else
+					texture = GetSpellTexture(info.id);
+					start, duration, enable = GetSpellCooldown(info.id);
+				end
+
+				btn:SetPoint("TOPLEFT", cd_left + (i * 41), 0-103);
+				btn:Show();
+				btn:SetNormalTexture(texture);
+				btn:SetCooldownManual(enable, start, duration);
+			else
+				btn:Hide();
+			end
+		end
+
 
 	end
 end
