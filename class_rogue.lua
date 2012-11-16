@@ -36,8 +36,8 @@ function ButtonMash.CreateUI()
 		local cols = 5;
 		local rows = 3;
 
-		ButtonMash.ResizeUIFrame((cols*40)+(cols-1), (rows*40)+(rows-1));
-		ButtonMash.UIFrame.texture:SetTexture(1, 0, 0);
+		ButtonMash.ResizeUIFrame((cols*40)+(cols-1), (rows*40)+(rows-1)+21);
+		--ButtonMash.UIFrame.texture:SetTexture(1, 0, 0);
 
 		-- main buttons
 		ButtonMash.CreateButton('ss',  41*0, 0, 40, 40, [[Interface\Icons\spell_shadow_ritualofsacrifice]]);
@@ -240,7 +240,7 @@ function ButtonMash.UpdateFrame()
 		local cds = ButtonMash.GetCooldowns();
 
 		local cd_width = (41 * cds.count) - 1;
-		local cd_left = (102 - (cd_width / 2)) - 41;
+		local cd_left = ((204 / 2) - (cd_width / 2)) + 41;
 
 		local i;
 		for i=1,ButtonMash.combat_rogue.cd_buttons_max do
