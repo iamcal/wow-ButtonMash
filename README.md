@@ -15,3 +15,7 @@ Bleh...
 2. Add warning for missing frost presence
 3. Figure out max time to wait before frost strike during killing machine
 4. Add some cooldowns
+
+## TODO - Combat Rogue
+
+1. Finish porting ComboMeal logic

@@ -9,3 +9,4 @@
 ButtonMash.lua
 
 class_dk.lua
+class_rogue.lua
