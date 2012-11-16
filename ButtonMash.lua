@@ -100,17 +100,10 @@ end
 
 function ButtonMash.GetCurrentTalentSpec()
 
-	local i;
-	for i=1,3 do
+	local activeSpec = GetActiveSpecGroup(false);
+	local spec = GetSpecialization(false, false, activeSpec);
 
-		local talentGroup = GetActiveTalentGroup(false, false);
-		local _, _, _, _, combatPoints = GetTalentTabInfo(i, false, false, talentGroup);
-		if (combatPoints > 11) then
-			return i;
-		end
-	end
-
-	return 0;
+	return spec;
 end
 
 
