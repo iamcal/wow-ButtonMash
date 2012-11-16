@@ -603,6 +603,60 @@ function ButtonMash.GetSpellCost(spellName)
 end
 
 
+ButtonMash.cooldown_spells = {
+	"Lifeblood",		-- herbalists
+	"Rocket Barrage",	-- goblins
+	"Blood Fury",		-- orcs
+	"War Stomp",		-- tauren
+	"Berserking",		-- trolls
+};
+
+function ButtonMash.GetCooldowns()
+
+	local cooldowns = {};	
+	local cooldowns_count = 0;
+
+	local t1_item = GetInventoryItemID("player", 13);
+	local t2_item = GetInventoryItemID("player", 14);
+	local t1_spell = nil;
+	local t2_spell = nil;
+	if (t1_item) then t1_spell = GetItemSpell(t1_item); end
+	if (t2_item) then t2_spell = GetItemSpell(t2_item); end
+
+	if (t1_spell) then
+		table.insert(cooldowns, {
+			type = "item",
+			id = t1_item,
+		});
+		cooldowns_count = cooldowns_count + 1;
+	end
+	if (t2_spell) then
+		table.insert(cooldowns, {
+			type = "item",
+			id = t2_item,
+		});
+		cooldowns_count = cooldowns_count + 1;
+	end
+
+	local k,v
+	for k,v in pairs(ButtonMash.cooldown_spells) do
+		local count = GetSpellCount(v);
+		if (count) then
+			table.insert(cooldowns, {
+				type = "spell",
+				id = v,
+			});
+			cooldowns_count = cooldowns_count + 1;
+		end
+	end
+
+	return {
+		count = cooldowns_count,
+		abilities = cooldowns,
+	};	
+end
+
+
 ButtonMash.EventFrame = CreateFrame("Frame");
 ButtonMash.EventFrame:Show();
 ButtonMash.EventFrame:SetScript("OnEvent", ButtonMash.OnEvent);
