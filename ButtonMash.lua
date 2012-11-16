@@ -18,6 +18,7 @@ ButtonMash.start_h = 200;
 ButtonMash.buttons = {};
 ButtonMash.misc_counter = 0;
 
+
 --
 -- load and save prefs
 --
@@ -126,6 +127,10 @@ function ButtonMash.OnEvent(frame, event, ...)
 	if (event == 'PLAYER_LOGOUT') then
 		ButtonMash.OnSaving();
 		return;
+	end
+
+	if (ButtonMash.ModuleOnEvent) then
+		ButtonMash.ModuleOnEvent(event, ...);
 	end
 end
 
@@ -341,7 +346,9 @@ function ButtonMash.DestroyButtons()
 	ButtonMash.buttons = {};
 end
 
-function ButtonMash.SetButtonState(btn, state, spellName)
+function ButtonMash.SetButtonState(btn_id, state, spellName)
+
+	local btn = ButtonMash.buttons[btn_id];
 
 	-- energy state overlay
 	local isUsable, notEnoughMana = IsUsableSpell(spellName);
@@ -603,4 +610,4 @@ ButtonMash.EventFrame:SetScript("OnUpdate", ButtonMash.OnUpdate);
 ButtonMash.EventFrame:RegisterEvent("ADDON_LOADED");
 ButtonMash.EventFrame:RegisterEvent("PLAYER_LOGIN");
 ButtonMash.EventFrame:RegisterEvent("PLAYER_LOGOUT");
-ButtonMash.EventFrame:RegisterEvent("UNIT_COMBO_POINTS");
+
