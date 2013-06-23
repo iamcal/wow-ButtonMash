@@ -1,12 +1,8 @@
-if select(2, UnitClass('player')) ~= "DEATHKNIGHT" then return end
-ButtonMash.enabled_for_class = true;
 
+ButtonMash.FrostDK = {};
+ButtonMash.RegisterClassSpec('FrostDK', 'DEATHKNIGHT', 2);
 
-function ButtonMash.CreateUI()
-
-	if (ButtonMash.current_talent_spec == 2) then
-
-		ButtonMash.enabled_for_spec = true;
+function ButtonMash.FrostDK.CreateUI()
 
 		local cols = 4;
 		local rows = 1;
@@ -25,23 +21,15 @@ function ButtonMash.CreateUI()
 		ButtonMash.buttons['ob'].label:SetText("3");
 		ButtonMash.buttons['fs'].label:SetText("4");
 
-		return true;
-	end
-
-	return false;
 end;
 
-function ButtonMash.DestroyUI()
+function ButtonMash.FrostDK.DestroyUI()
 
-	if (ButtonMash.current_talent_spec == 2) then
-
-		ButtonMash.DestroyButtons();
-	end
+	ButtonMash.DestroyButtons();
 end;
 
-function ButtonMash.UpdateFrame()
+function ButtonMash.FrostDK.UpdateFrame()
 
-	if (ButtonMash.current_talent_spec == 2) then
 
 		-- dim everything if we don't have a target
 		local alpha = 1;
@@ -150,8 +138,5 @@ function ButtonMash.UpdateFrame()
 		else
 			ButtonMash.buttons.fs:SetAlpha(1);
 		end
-
-
-	end
 
 end;

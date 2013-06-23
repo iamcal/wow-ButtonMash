@@ -13,10 +13,24 @@ ButtonMash.enabled_for_class = false;
 ButtonMash.enabled_for_spec = false;
 ButtonMash.current_talent_spec = 0;
 
+ButtonMash.current_module_id = nil;
+ButtonMash.current_module = nil;
+ButtonMash.modules = {};
+
 ButtonMash.start_w = 200;
 ButtonMash.start_h = 200;
 ButtonMash.buttons = {};
 ButtonMash.misc_counter = 0;
+
+
+--
+-- module registration
+--
+
+function ButtonMash.RegisterClassSpec(name, class_id, spec_id)
+
+	ButtonMash.modules[class_id..'-'..spec_id] = name;
+end
 
 
 --
@@ -55,10 +69,6 @@ end
 
 function ButtonMash.OnUpdate()
 
-	if (not ButtonMash.enabled_for_class) then
-		return;
-	end
-
 	if (not ButtonMash.fully_loaded) then
 		return;
 	end
@@ -68,34 +78,36 @@ function ButtonMash.OnUpdate()
 	-- figure out if talent spec has changed. if so, destroy & create UI
 	--
 
-	local spec_now = ButtonMash.GetCurrentTalentSpec();
-	if (spec_now ~= ButtonMash.current_talent_spec) then
-		if (ButtonMash.DestroyUI) then
-			ButtonMash.DestroyUI();
+	local class_id = select(2, UnitClass('player'));
+	local spec_id = ButtonMash.GetCurrentTalentSpec();
+	local key = class_id..'-'..spec_id;
+	local module_id = ButtonMash.modules[key];
+
+	if (module_id ~= ButtonMash.current_module_id) then
+
+		if (ButtonMash.current_module and ButtonMash.current_module.DestroyUI) then
+			ButtonMash.current_module.DestroyUI();
 			ButtonMash.UIFrame:Hide();
 		end
 
-		ButtonMash.current_talent_spec = spec_now;
-		ButtonMash.enabled_for_spec = false;
+		ButtonMash.current_module_id = module_id;
+		ButtonMash.current_module = ButtonMash[module_id];
 
-		if (ButtonMash.CreateUI) then
-			local created = ButtonMash.CreateUI();
-			if (created and not ButtonMashPrefs.hide) then
+		if (ButtonMash.current_module and ButtonMash.current_module.CreateUI) then
+			
+			ButtonMash.current_module.CreateUI();
+			if (not ButtonMashPrefs.hide) then
 				ButtonMash.UIFrame:Show();
 			end
 		end
-	end
-
-	if (not ButtonMash.enabled_for_spec) then
-		return;
 	end
 
 	if (ButtonMashPrefs.hide) then 
 		return;
 	end
 
-	if (ButtonMash.UpdateFrame) then
-		ButtonMash.UpdateFrame();
+	if (ButtonMash.current_module and ButtonMash.current_module.UpdateFrame) then
+		ButtonMash.current_module.UpdateFrame();
 	end
 end
 
@@ -129,8 +141,8 @@ function ButtonMash.OnEvent(frame, event, ...)
 		return;
 	end
 
-	if (ButtonMash.ModuleOnEvent) then
-		ButtonMash.ModuleOnEvent(event, ...);
+	if (ButtonMash.current_module and ButttonMash.current_module.ModuleOnEvent) then
+		ButtonMash.current_module.ModuleOnEvent(event, ...);
 	end
 end
 

@@ -8,5 +8,5 @@
 
 ButtonMash.lua
 
-class_dk.lua
-class_rogue.lua
+class_dk_frost.lua
+class_rogue_combat.lua
