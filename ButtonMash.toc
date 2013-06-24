@@ -10,3 +10,5 @@ ButtonMash.lua
 
 class_dk_frost.lua
 class_rogue_combat.lua
+class_warrior_prot.lua
+
