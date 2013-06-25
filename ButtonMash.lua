@@ -141,7 +141,7 @@ function ButtonMash.OnEvent(frame, event, ...)
 		return;
 	end
 
-	if (ButtonMash.current_module and ButttonMash.current_module.ModuleOnEvent) then
+	if (ButtonMash.current_module and ButtonMash.current_module.ModuleOnEvent) then
 		ButtonMash.current_module.ModuleOnEvent(event, ...);
 	end
 end
