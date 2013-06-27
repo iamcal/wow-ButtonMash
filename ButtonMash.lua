@@ -243,7 +243,7 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 	b.label:SetTextColor(1, 1, 1, 1);
 	b.label:SetFont([[Fonts\FRIZQT__.TTF]], 12, "OUTLINE");
 	b.label:SetPoint("CENTER", b, "CENTER", 0, 0);
-	b.label:SetText(" ");
+
 
 
 	-- the cooldown timer
@@ -313,6 +313,29 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 	ButtonMash.buttons[short_id] = b;
 
 	return b;
+end
+
+function ButtonMash.CreateBoundButton(short_id, x, y, w, h, spell)
+
+	local name, _, icon = GetSpellInfo(spell);
+	local btn = ButtonMash.CreateButton(short_id, x, y, w, h, icon);
+	btn.bound_spell = spell;
+
+	btn.label:SetText("??");
+
+	return btn;
+end
+
+function ButtonMash.UpdateBoundButtons()
+
+	for i in pairs(ButtonMash.buttons) do
+		if (ButtonMash.buttons[i].bound_spell) then
+			ButtonMash.buttons[i]:SetSpellState(ButtonMash.buttons[i].bound_spell);
+		end
+	end
+
+	-- TODO: update button labels based on key bindings
+
 end
 
 function ButtonMash.SetFontSize(string, size)
