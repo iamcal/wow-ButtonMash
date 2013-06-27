@@ -249,7 +249,7 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 	b.label:ClearAllPoints()
 	b.label:SetTextColor(1, 1, 1, 1);
 	b.label:SetFont([[Fonts\FRIZQT__.TTF]], 12, "OUTLINE");
-	b.label:SetPoint("CENTER", b, "CENTER", 0, 0);
+	b.label:SetPoint("TOPRIGHT", b, -4, -4);
 
 
 
@@ -329,7 +329,7 @@ function ButtonMash.CreateBoundButton(short_id, x, y, w, h, spell)
 	local btn = ButtonMash.CreateButton(short_id, x, y, w, h, icon);
 	btn.bound_spell = spell;
 
-	btn.label:SetText("??");
+	btn.label:SetText("?");
 
 	return btn;
 end
@@ -337,13 +337,13 @@ end
 function ButtonMash.UpdateBoundButtons()
 
 	for i in pairs(ButtonMash.buttons) do
-		if (ButtonMash.buttons[i].bound_spell) then
-			ButtonMash.buttons[i]:SetSpellState(ButtonMash.buttons[i].bound_spell);
+		local btn = ButtonMash.buttons[i];
+		if (btn.bound_spell) then
+
+			btn:SetSpellState(btn.bound_spell);
+			btn.label:SetText(ButtonMashBinds.CurrentKey("SPELL_"..btn.bound_spell));
 		end
 	end
-
-	-- TODO: update button labels based on key bindings
-
 end
 
 function ButtonMash.SetFontSize(string, size)
