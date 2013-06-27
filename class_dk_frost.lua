@@ -25,7 +25,6 @@ end;
 
 function ButtonMash.FrostDK.DestroyUI()
 
-	ButtonMash.DestroyButtons();
 end;
 
 function ButtonMash.FrostDK.UpdateFrame()

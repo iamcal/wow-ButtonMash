@@ -42,7 +42,6 @@ end
 
 function ButtonMash.ProtWarrior.DestroyUI()
 
-	ButtonMash.DestroyButtons();
 end;
 
 function ButtonMash.ProtWarrior.UpdateFrame()

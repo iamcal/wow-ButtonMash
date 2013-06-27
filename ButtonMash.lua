@@ -85,17 +85,21 @@ function ButtonMash.OnUpdate()
 
 	if (module_id ~= ButtonMash.current_module_id) then
 
-		if (ButtonMash.current_module and ButtonMash.current_module.DestroyUI) then
-			ButtonMash.current_module.DestroyUI();
+		if (ButtonMash.current_module) then
+			if (ButtonMash.current_module.DestroyUI) then
+				ButtonMash.current_module.DestroyUI();
+			end
+			ButtonMash.DestroyButtons();
 			ButtonMash.UIFrame:Hide();
 		end
 
 		ButtonMash.current_module_id = module_id;
 		ButtonMash.current_module = ButtonMash[module_id];
 
-		if (ButtonMash.current_module and ButtonMash.current_module.CreateUI) then
-			
-			ButtonMash.current_module.CreateUI();
+		if (ButtonMash.current_module) then
+			if (ButtonMash.current_module.CreateUI) then
+				ButtonMash.current_module.CreateUI();
+			end
 			if (not ButtonMashPrefs.hide) then
 				ButtonMash.UIFrame:Show();
 			end
@@ -106,8 +110,11 @@ function ButtonMash.OnUpdate()
 		return;
 	end
 
-	if (ButtonMash.current_module and ButtonMash.current_module.UpdateFrame) then
-		ButtonMash.current_module.UpdateFrame();
+	if (ButtonMash.current_module) then
+		if (ButtonMash.current_module.UpdateFrame) then
+			ButtonMash.current_module.UpdateFrame();
+		end
+		ButtonMash.UpdateBoundButtons();
 	end
 end
 

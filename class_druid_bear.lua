@@ -20,7 +20,6 @@ end
 
 function ButtonMash.BearTank.DestroyUI()
 
-	ButtonMash.DestroyButtons();
 end;
 
 function ButtonMash.BearTank.UpdateFrame()
@@ -50,10 +49,6 @@ function ButtonMash.BearTank.UpdateFrame()
 		ButtonMash.SetFontSize(ButtonMash.Label, 20);
 		ButtonMash.Label:SetText("Too Far");
 	end
-
-
-	-- set spell timers etc
-	ButtonMash.UpdateBoundButtons();
 
 
 	-- everything below here is only for active targets
