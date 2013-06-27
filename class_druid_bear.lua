@@ -2,6 +2,15 @@
 ButtonMash.BearTank = {};
 ButtonMash.RegisterClassSpec('BearTank', 'DRUID', 3);
 
+ButtonMash.BearTank.FRENZIED_REGENERATION	= 22842;
+ButtonMash.BearTank.SAVAGE_DEFENSE		= 62606;
+ButtonMash.BearTank.MANGLE			= 33878;
+ButtonMash.BearTank.THRASH			= 77758;
+ButtonMash.BearTank.LACERATE			= 33745;
+ButtonMash.BearTank.MAUL			= 6807;
+ButtonMash.BearTank.FAERIE_FIRE			= 770;
+
+
 function ButtonMash.BearTank.CreateUI()
 
 	local cols = 5;
@@ -12,15 +21,17 @@ function ButtonMash.BearTank.CreateUI()
 
 	-- main buttons
 
-	ButtonMash.CreateBoundButton('frn', 41*1, 0, 40, 40, "Frenzied Regeneration");
-	ButtonMash.CreateBoundButton('sav', 41*3, 0, 40, 40, "Savage Defense");
+	ButtonMash.CreateBoundButton('frn', 41*1, 0, 40, 40, ButtonMash.BearTank.FRENZIED_REGENERATION);
+	ButtonMash.CreateBoundButton('sav', 41*3, 0, 40, 40, ButtonMash.BearTank.SAVAGE_DEFENSE);
 
-	ButtonMash.CreateBoundButton('man', 41*0, 41, 40, 40, "Mangle");
-	ButtonMash.CreateBoundButton('trs', 41*1, 41, 40, 40, "Thrash");
-	ButtonMash.CreateBoundButton('lac', 41*2, 41, 40, 40, "Lacerate");
-	ButtonMash.CreateBoundButton('mul', 41*3, 41, 40, 40, "Maul");
-	ButtonMash.CreateBoundButton('frf', 41*4, 41, 40, 40, "Faerie Fire");
+	ButtonMash.CreateBoundButton('man', 41*0, 41, 40, 40, ButtonMash.BearTank.MANGLE);
+	ButtonMash.CreateBoundButton('trs', 41*1, 41, 40, 40, ButtonMash.BearTank.THRASH);
+	ButtonMash.CreateBoundButton('lac', 41*2, 41, 40, 40, ButtonMash.BearTank.LACERATE);
+	ButtonMash.CreateBoundButton('mul', 41*3, 41, 40, 40, ButtonMash.BearTank.MAUL);
+	ButtonMash.CreateBoundButton('frf', 41*4, 41, 40, 40, ButtonMash.BearTank.FAERIE_FIRE);
 
+
+	-- rage label
 
 	ButtonMash.BearTank.RageLabel = ButtonMash.Cover:CreateFontString(nil, "OVERLAY");
 	ButtonMash.BearTank.RageLabel:SetPoint("CENTER", ButtonMash.UIFrame, "TOPLEFT", (41*2)+20, -20);
@@ -28,7 +39,6 @@ function ButtonMash.BearTank.CreateUI()
 	ButtonMash.BearTank.RageLabel:SetText("100");
 	ButtonMash.BearTank.RageLabel:SetTextColor(0,1,0,1);
 	ButtonMash.SetFontSize(ButtonMash.BearTank.RageLabel, 22);
-
 end
 
 function ButtonMash.BearTank.DestroyUI()
