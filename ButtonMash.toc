@@ -1,8 +1,8 @@
 ## Interface: 50300
 ## Title : ButtonMash
-## Notes: Rotation timers for DPS
+## Notes: Rotation timers
 ## Author: Cal Henderson (Bees on Hyjal-US)
-## Version: 1.3
+## Version: 1.4
 ## Dependencies: 
 ## SavedVariablesPerCharacter: ButtonMashPrefs
 
