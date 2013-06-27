@@ -111,10 +111,10 @@ function ButtonMash.OnUpdate()
 	end
 
 	if (ButtonMash.current_module) then
+		ButtonMash.UpdateBoundButtons();
 		if (ButtonMash.current_module.UpdateFrame) then
 			ButtonMash.current_module.UpdateFrame();
 		end
-		ButtonMash.UpdateBoundButtons();
 	end
 end
 
@@ -302,13 +302,14 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 
 	function b:SetGlow(is_glowing)
 		if (is_glowing) then
+			self.glow:Show();
 			if (not self.is_glowing) then
 				self.glow.animOut:Stop();
 				self.glow.animIn:Play();
 				self.is_glowing = true;
 			end
-			self.glow:Show();
 		else
+			self.glow:Hide();
 			if (self.is_glowing) then
 				self.glow.animIn:Stop();
 				self.glow.animOut:Play();
