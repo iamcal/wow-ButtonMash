@@ -65,7 +65,7 @@ function ButtonMash.BearTank.UpdateFrame()
 		ButtonMash.buttons[i]:SetAlpha(alpha);
 	end
 
-	ButtonMash.BearTank.RageLabel:SetText(UnitPower("player", "RAGE"));
+	ButtonMash.BearTank.RageLabel:SetText(UnitPower("player", 1));
 
 
 	-- range label
