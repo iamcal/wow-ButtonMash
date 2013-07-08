@@ -2,6 +2,12 @@
 ButtonMash.CombatRogue = {};
 ButtonMash.RegisterClassSpec('CombatRogue', 'ROGUE', 2);
 
+ButtonMash.CombatRogue.REVEALING_STIKE	= 84617;
+ButtonMash.CombatRogue.SINISTER_STRIKE	= 1752;
+ButtonMash.CombatRogue.SLICE_N_DICE	= 5171;
+ButtonMash.CombatRogue.RUPTURE		= 1943;
+ButtonMash.CombatRogue.EVISCERATE	= 2098;
+
 ButtonMash.combat_rogue = {
 	cd_buttons_max = 10,
 	last_combo_guid = nil,
@@ -9,13 +15,6 @@ ButtonMash.combat_rogue = {
 	bleed_mobs = {},
 	bleed_debuffs = {},
 };
-
-ButtonMash.combat_rogue.bleed_debuffs["Mangle"]		= 1; -- bear/cat druid
-ButtonMash.combat_rogue.bleed_debuffs["Hemorrhage"]	= 1; -- sub rogue
-ButtonMash.combat_rogue.bleed_debuffs["Blood Frenzy"]	= 1; -- arms warrior
-ButtonMash.combat_rogue.bleed_debuffs["Tendon Rip"]	= 1; -- hyena pet
-ButtonMash.combat_rogue.bleed_debuffs["Gore"]		= 1; -- boar pet
-ButtonMash.combat_rogue.bleed_debuffs["Stampede"]	= 1; -- rhino pet
 
 function ButtonMash.CombatRogue.ModuleOnEvent(event, ...)
 
@@ -37,11 +36,11 @@ function ButtonMash.CombatRogue.CreateUI()
 		--ButtonMash.UIFrame.texture:SetTexture(1, 0, 0);
 
 		-- main buttons
-		ButtonMash.CreateButton('ss',  41*0, 0, 40, 40, [[Interface\Icons\spell_shadow_ritualofsacrifice]]);
-		ButtonMash.CreateButton('snd', 41*1, 0, 40, 40, [[Interface\Icons\ability_rogue_slicedice]]);
-		ButtonMash.CreateButton('rev', 41*2, 0, 40, 40, [[Interface\Icons\inv_sword_97]]);
-		ButtonMash.CreateButton('rup', 41*3, 0, 40, 40, [[Interface\Icons\ability_rogue_rupture]]);
-		ButtonMash.CreateButton('evi', 41*4, 0, 40, 40, [[Interface\Icons\ability_rogue_eviscerate]]);
+		ButtonMash.CreateBoundButton('rev', 41*0, 0, 40, 40, ButtonMash.CombatRogue.REVEALING_STIKE);
+		ButtonMash.CreateBoundButton('ss',  41*1, 0, 40, 40, ButtonMash.CombatRogue.SINISTER_STRIKE);
+		ButtonMash.CreateBoundButton('snd', 41*2, 0, 40, 40, ButtonMash.CombatRogue.SLICE_N_DICE);
+		ButtonMash.CreateBoundButton('rup', 41*3, 0, 40, 40, ButtonMash.CombatRogue.RUPTURE);
+		ButtonMash.CreateBoundButton('evi', 41*4, 0, 40, 40, ButtonMash.CombatRogue.EVISCERATE);
 
 		-- combo point boxes
 		ButtonMash.PointBoxes = {};
@@ -62,15 +61,23 @@ function ButtonMash.CombatRogue.CreateUI()
 			ButtonMash.CreateButton('cd'..i, 0, 103, 40, 40, [[Interface\Icons\spell_shadow_shadowworddominate]]);
 		end
 
-		ButtonMash.buttons['ss'].label:SetText("2");
-		ButtonMash.buttons['snd'].label:SetText("7");
-		ButtonMash.buttons['rev'].label:SetText("1");
-		ButtonMash.buttons['rup'].label:SetText("4");
-		ButtonMash.buttons['evi'].label:SetText("3");
 		ButtonMash.buttons['ar'].label:SetText("ALT-1");
 		ButtonMash.buttons['ks'].label:SetText("ALT-2");
 		ButtonMash.buttons['bf'].label:SetText("ALT-3");
+end;
 
+function ButtonMash.CombatRogue.DestroyUI()
+
+		ButtonMash.EventFrame:UnregisterEvent("UNIT_COMBO_POINTS");
+
+		local i;
+		for i in pairs(ButtonMash.PointBoxes) do
+
+			ButtonMash.PointBoxes[i]:Hide();
+			ButtonMash.PointBoxes[i]:SetParent(nil);
+		end
+
+		ButtonMash.PointBoxes = {};
 end;
 
 function ButtonMash.CombatRogue.CreateComboBox(x, y, w, h)
@@ -123,104 +130,88 @@ function ButtonMash.CombatRogue.CreateComboBox(x, y, w, h)
 	return b;
 end
 
-function ButtonMash.CombatRogue.DestroyUI()
-
-		ButtonMash.EventFrame:UnregisterEvent("UNIT_COMBO_POINTS");
-
-		local i;
-		for i in pairs(ButtonMash.PointBoxes) do
-
-			ButtonMash.PointBoxes[i]:Hide();
-			ButtonMash.PointBoxes[i]:SetParent(nil);
-		end
-
-		ButtonMash.PointBoxes = {};
-end;
-
 function ButtonMash.CombatRogue.UpdateFrame()
 
-		-- if we're not in combat, dump our bleed list so it doesn't fill up forever
-		if (not UnitAffectingCombat("player")) then
-			ButtonMash.combat_rogue.bleed_mobs = {};
-		end
+	local status = ButtonMash.CombatRogue.GetCombatRogueShotStatus();
 
 
-		local status = ButtonMash.CombatRogue.GetCombatRogueShotStatus();
+	-- set up buttons and boxes
+
+	ButtonMash.CombatRogue.UpdateButton('rev', status.shots.rev);
+	ButtonMash.CombatRogue.UpdateButton('ss' , status.shots.ss );
+	ButtonMash.CombatRogue.UpdateButton('snd', status.shots.snd);
+	ButtonMash.CombatRogue.UpdateButton('rup', status.shots.rup);
+	ButtonMash.CombatRogue.UpdateButton('evi', status.shots.evi);
 
 
-		-- set up buttons and boxes
-		ButtonMash.SetButtonState('ss',  status.shots.ss,  "Sinister Strike");
-		ButtonMash.SetButtonState('snd', status.shots.snd, "Slice and Dice");
-		ButtonMash.SetButtonState('rev', status.shots.rev, "Revealing Strike");
-		ButtonMash.SetButtonState('rup', status.shots.rup, "Rupture");
-		ButtonMash.SetButtonState('evi', status.shots.evi, "Eviscerate");
-
-		if (status.comboPoints > 0 or status.comboPointsOld == 0) then
-			ButtonMash.PointBoxes[1]:SetState(status.comboPoints >= 1, false);
-			ButtonMash.PointBoxes[2]:SetState(status.comboPoints >= 2, false);
-			ButtonMash.PointBoxes[3]:SetState(status.comboPoints >= 3, false);
-			ButtonMash.PointBoxes[4]:SetState(status.comboPoints >= 4, false);
-			ButtonMash.PointBoxes[5]:SetState(status.comboPoints >= 5, false);
-		else
-			ButtonMash.PointBoxes[1]:SetState(status.comboPointsOld >= 1, true);
-			ButtonMash.PointBoxes[2]:SetState(status.comboPointsOld >= 2, true);
-			ButtonMash.PointBoxes[3]:SetState(status.comboPointsOld >= 3, true);
-			ButtonMash.PointBoxes[4]:SetState(status.comboPointsOld >= 4, true);
-			ButtonMash.PointBoxes[5]:SetState(status.comboPointsOld >= 5, true);
-		end
+	if (status.comboPoints > 0 or status.comboPointsOld == 0) then
+		ButtonMash.PointBoxes[1]:SetState(status.comboPoints >= 1, false);
+		ButtonMash.PointBoxes[2]:SetState(status.comboPoints >= 2, false);
+		ButtonMash.PointBoxes[3]:SetState(status.comboPoints >= 3, false);
+		ButtonMash.PointBoxes[4]:SetState(status.comboPoints >= 4, false);
+		ButtonMash.PointBoxes[5]:SetState(status.comboPoints >= 5, false);
+	else
+		ButtonMash.PointBoxes[1]:SetState(status.comboPointsOld >= 1, true);
+		ButtonMash.PointBoxes[2]:SetState(status.comboPointsOld >= 2, true);
+		ButtonMash.PointBoxes[3]:SetState(status.comboPointsOld >= 3, true);
+		ButtonMash.PointBoxes[4]:SetState(status.comboPointsOld >= 4, true);
+		ButtonMash.PointBoxes[5]:SetState(status.comboPointsOld >= 5, true);
+	end
 
 
-		-- blade flurry
+	-- blade flurry
 
-		local btn = ButtonMash.buttons.bf;
-		if (status.bladeFlurry) then
-			btn:SetStateColor('normal');
-			btn:SetAlpha(1);
-			btn:SetGlow(true);
-		else
-			btn:SetStateColor('off');
-			btn:SetAlpha(1);
-			btn:SetGlow(false);
-		end
-		btn:SetCooldown(true, "Blade Flurry");
+	local btn = ButtonMash.buttons.bf;
+	if (status.bladeFlurry) then
+		btn:SetStateColor('normal');
+		btn:SetAlpha(1);
+		btn:SetGlow(true);
+	else
+		btn:SetStateColor('off');
+		btn:SetAlpha(1);
+		btn:SetGlow(false);
+	end
+	btn:SetCooldown(true, "Blade Flurry");
 
 
-		-- adrenaline rush
+	-- adrenaline rush
 
-		local btn = ButtonMash.buttons.ar;
+	local btn = ButtonMash.buttons.ar;
+	if (status.arActive) then
+		btn:SetAlpha(1);
+		btn:SetGlow(true);
+		btn:SetCooldownManual(true, status.arStart, status.arDuration);
+	else
 		if (status.ksActive) then
 			btn:SetAlpha(0.2);
 			btn:SetGlow(false);
 			btn:SetSpellState("Adrenaline Rush");
 		else
 			btn:SetAlpha(1);
-			if (status.arActive) then
-				btn:SetGlow(true);
-				btn:SetCooldownManual(true, status.arStart, status.arDuration);
-			else
-				btn:SetGlow(false);
-				btn:SetSpellState("Adrenaline Rush");
-			end
+			btn:SetGlow(false);
+			btn:SetSpellState("Adrenaline Rush");
 		end
+	end
 
 
-		-- killing spree
+	-- killing spree
 
-		local btn = ButtonMash.buttons.ks;
+	local btn = ButtonMash.buttons.ks;
+	if (status.ksActive) then
+		btn:SetAlpha(1);
+		btn:SetGlow(true);
+		btn:SetCooldownManual(true, status.ksStart, status.ksDuration);
+	else
 		if (status.arActive or status.energy > 40) then
 			btn:SetAlpha(0.2);
 			btn:SetGlow(false);
 			btn:SetSpellState("Killing Spree");
 		else
 			btn:SetAlpha(1);
-			if (status.ksActive) then
-				btn:SetGlow(true);
-				btn:SetCooldownManual(true, status.ksStart, status.ksDuration);
-			else
-				btn:SetGlow(false);
-				btn:SetSpellState("Killing Spree");
-			end
+			btn:SetGlow(false);
+			btn:SetSpellState("Killing Spree");
 		end
+	end
 
 
 		-- trinkets & other cooldowns
@@ -255,6 +246,25 @@ function ButtonMash.CombatRogue.UpdateFrame()
 				btn:Hide();
 			end
 		end
+end
+
+function ButtonMash.CombatRogue.UpdateButton(btn_id, state)
+
+	local btn = ButtonMash.buttons[btn_id];
+
+	-- glow
+	if (state == "now") then
+		btn:SetGlow(true);
+	else
+		btn:SetGlow(false);
+	end
+
+	-- transparency
+	if (state == "off") then
+		btn:SetAlpha(0.2);
+	else
+		btn:SetAlpha(1);
+	end
 end
 
 function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
@@ -335,20 +345,17 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 	-- figure out current target debuffs.
 	-- we need to check if this target has ever had a bleed on it.
 
-	local ruptureUp = false;
-	local ruptureRemain = 0;
-
-	local target_guid = UnitGUID("target");
+	local rupture_remain = 0;
+	local revealing_remain = 0;
 
 	local index = 1
 	while UnitDebuff("target", index) do
 		local name, _, _, count, _, _, buffExpires, caster = UnitDebuff("target", index);
-		if (ButtonMash.combat_rogue.bleed_debuffs[name]) then
-			ButtonMash.combat_rogue.bleed_mobs[target_guid] = 1;
-		end
 		if ((name == "Rupture") and (caster == "player")) then
-			ruptureUp = true;
-			ruptureRemain = buffExpires - GetTime();
+			rupture_remain = buffExpires - GetTime();
+		end
+		if ((name == "Revealing Strike") and (caster == "player")) then
+			revealing_remain = buffExpires - GetTime();
 		end
 		index = index + 1
 	end
@@ -356,15 +363,13 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 
 	-- check our own buffs
 
-	local hasSnD = false;
-	local remainSnD = 0;
+	local snd_remain = 0;
 
 	local index = 1;
 	while UnitBuff("player", index) do
 		local name, _, _, count, _, _, buffExpires, caster = UnitBuff("player", index)
 		if (name == "Slice and Dice") then
-			hasSnD = true;
-			remainSnD = buffExpires - GetTime();
+			snd_remain = buffExpires - GetTime();
 		end
 		index = index + 1
 	end
@@ -381,28 +386,14 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 	};
 
 
-	-- should we use Rupture?
-	-- not if we have blade flurry up!
-
-	local useRupture = true;
-
-	if (out.bladeFlurry) then
-		useRupture = false;
-	end
-
-
 	-- main priority list
-	-- if slice and dice is down, use with any combo points (1+)
-	-- if slice and dice will fall off within X seconds, use 4-5 combo points on it
-	-- if we have *exactly* 4 combo points, use revealing strike
-	-- if target has bleed debuff
-		-- if rupture will fall off within 2 seconds, wait
-		-- if rupture is not active, 5 combo rupture
-	-- 5 combo eviscerate
-	-- sinister strike
+	-- if slice and dice is off within 1.5, use with any combo points (1+)
+	-- if target does not have revealing strike for next 1.5 seconds, do that
+	-- if target does not have rupture, build 5 cp and then rupture
+	-- build combo points
+	-- if 4-5 cp, evis
 
-
-	if (not hasSnD) then
+	if (snd_remain < 1.5) then
 
 		if (comboPoints > 0) then
 			if (out.energy < costs.snd) then
@@ -417,21 +408,8 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 		return out;
 	end
 
-	if (remainSnD < 5) then
-		if (comboPoints > 3) then
-			if (out.energy < costs.snd) then
-				out.shots.snd = "next";
-			else
-				out.shots.snd = "now";
-			end
-		else
-			out.shots.snd = "next";
-			out.shots.ss = "now";
-		end
-		return out;
-	end
+	if (revealing_remain < 1.5) then
 
-	if (comboPoints == 4) then
 		if (out.energy < costs.rev) then
 			out.shots.rev = "next";
 		else
@@ -440,29 +418,23 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 		return out;
 	end
 
-	if (useRupture) then
+	if (rupture_remain < 1.5) then
 
-		if (ruptureUp and (ruptureRemain < 2)) then
-			out.shots.rup = "next";
-			return out;
-		end
-
-		if (not ruptureUp) then
-			if (comboPoints == 5) then
-				if (out.energy < costs.rup) then
-					out.shots.rup = "next";
-				else
-					out.shots.rup = "now";
-				end
-			else
+		if (comboPoints == 5) then
+			
+			if (out.energy < costs.rup) then
 				out.shots.rup = "next";
-				out.shots.ss = "now";
+			else
+				out.shots.rup = "now";
 			end
-			return out;
+		else
+			out.shots.ss = "now";
+			out.shots.rup = "next";
 		end
+		return out;
 	end
 
-	if (comboPoints == 5) then
+	if (comboPoints >= 5) then
 		if (out.energy < costs.evi) then
 			out.shots.evi = "next";
 		else
