@@ -9,6 +9,8 @@ ButtonMash.Moonkin.STARFIRE	= 2912;
 ButtonMash.Moonkin.STARSURGE	= 78674;
 ButtonMash.Moonkin.STARFALL	= 48505;
 
+ButtonMash.Moonkin.SUNFIRE_NAME = GetSpellInfo(ButtonMash.Moonkin.SUNFIRE);
+
 function ButtonMash.Moonkin.CreateUI()
 
 	local cols = 6;
@@ -42,9 +44,9 @@ function ButtonMash.Moonkin.UpdateFrame()
 	end
 	if (not has_viable_target) then
 		alpha = 0.2;
-		ButtonMash.Moonkin.RageLabel:SetAlpha(0.4);
+		--ButtonMash.Moonkin.RageLabel:SetAlpha(0.4);
 	else
-		ButtonMash.Moonkin.RageLabel:SetAlpha(1);
+		--ButtonMash.Moonkin.RageLabel:SetAlpha(1);
 	end
 
 	local i;
@@ -56,7 +58,7 @@ function ButtonMash.Moonkin.UpdateFrame()
 	-- range label
 
 	ButtonMash.Label:SetText(" ");
-	if (has_viable_target and (IsSpellInRange(ButtonMash.Moonkin.SUNFIRE) ~= 1)) then
+	if (has_viable_target and (IsSpellInRange(ButtonMash.Moonkin.SUNFIRE_NAME) ~= 1)) then
 
 		ButtonMash.Label:SetTextColor(1,0,0,1)
 		ButtonMash.SetFontSize(ButtonMash.Label, 20);
