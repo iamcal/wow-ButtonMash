@@ -80,6 +80,7 @@ function ButtonMash.OnUpdate()
 
 	local class_id = select(2, UnitClass('player'));
 	local spec_id = ButtonMash.GetCurrentTalentSpec();
+	spec_id = spec_id or 0;
 	local key = class_id..'-'..spec_id;
 	local module_id = ButtonMash.modules[key];
 
