@@ -249,9 +249,8 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 	b.label:Show()
 	b.label:ClearAllPoints()
 	b.label:SetTextColor(1, 1, 1, 1);
-	b.label:SetFont([[Fonts\FRIZQT__.TTF]], 12, "OUTLINE");
+	b.label:SetFont([[Fonts\FRIZQT__.TTF]], 10, "OUTLINE");
 	b.label:SetPoint("TOPRIGHT", b, -4, -4);
-
 
 
 	-- the cooldown timer
@@ -407,7 +406,7 @@ function ButtonMash.SetButtonState(btn_id, state, spellName)
 	-- glow & cooldown
 	if (state == "now") then
 		btn:SetGlow(true);
-		btn:SetCooldown(true, spellName);		
+		btn:SetCooldown(true, spellName);
 	else
 		btn:SetGlow(false);
 		btn:SetCooldown(false);
