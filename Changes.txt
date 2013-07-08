@@ -15,3 +15,4 @@
  * Changed the way modules work
  * Added prot warrior module
  * Added guardian druid module
+ * Added balance druid module

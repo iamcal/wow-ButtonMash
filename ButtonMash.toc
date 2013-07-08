@@ -13,3 +13,4 @@ class_dk_frost.lua
 class_rogue_combat.lua
 class_warrior_prot.lua
 class_druid_bear.lua
+class_druid_moonkin.lua
