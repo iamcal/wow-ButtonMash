@@ -393,6 +393,11 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 	-- build combo points
 	-- if 4-5 cp, evis
 
+	local cp_gen = 'ss';
+	if (revealing_remain < 1.5) then
+		cp_gen = 'rev';
+	end
+
 	if (snd_remain < 1.5) then
 
 		if (comboPoints > 0) then
@@ -402,13 +407,13 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 				out.shots.snd = "now";
 			end
 		else
+			out.shots[cp_gen] = "now";
 			out.shots.snd = "next";
-			out.shots.ss = "now";
 		end
 		return out;
 	end
 
-	if (revealing_remain < 1.5) then
+	if (revealing_remain < 1.5 and comboPoints < 5) then
 
 		if (out.energy < costs.rev) then
 			out.shots.rev = "next";
@@ -428,7 +433,7 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 				out.shots.rup = "now";
 			end
 		else
-			out.shots.ss = "now";
+			out.shots[cp_gen] = "now";
 			out.shots.rup = "next";
 		end
 		return out;
@@ -441,8 +446,8 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 			out.shots.evi = "now";
 		end
 	else
+		out.shots[cp_gen] = "now";
 		out.shots.evi = "next";
-		out.shots.ss = "now";
 	end
 
 	return out;
