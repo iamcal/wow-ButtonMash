@@ -439,7 +439,7 @@ function ButtonMash.CombatRogue.GetCombatRogueShotStatus()
 		return out;
 	end
 
-	if (comboPoints >= 5) then
+	if (comboPoints >= 4) then
 		if (out.energy < costs.evi) then
 			out.shots.evi = "next";
 		else
