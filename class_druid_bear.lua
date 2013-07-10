@@ -42,6 +42,11 @@ function ButtonMash.BearTank.CreateUI()
 	ButtonMash.BearTank.HealthLabel:SetText("100");
 	ButtonMash.BearTank.HealthLabel:SetTextColor(0,1,0,1);
 	ButtonMash.SetFontSize(ButtonMash.BearTank.HealthLabel, 21);
+
+	ButtonMash.BearTank.SDCD = ButtonMash.CreateLabel((41*3)+20, 20);
+	ButtonMash.BearTank.SDCD:SetText("");
+	ButtonMash.BearTank.SDCD:SetTextColor(0,1,0,1);
+	ButtonMash.SetFontSize(ButtonMash.BearTank.SDCD, 18);
 end
 
 function ButtonMash.BearTank.DestroyUI()
@@ -89,6 +94,15 @@ function ButtonMash.BearTank.UpdateFrame()
 	end
 
 
+	-- SD label
+
+	if (state.sd_remain > 0) then
+		ButtonMash.BearTank.SDCD:SetText(string.format("%.1f", state.sd_remain));
+	else
+		ButtonMash.BearTank.SDCD:SetText(" ");
+	end
+
+
 	-- everything below here is only for active targets
 
 	if (not has_viable_target) then
@@ -106,7 +120,6 @@ function ButtonMash.BearTank.UpdateFrame()
 	ButtonMash.buttons.trs:SetGlow(state.next == 'Thrash');
 	ButtonMash.buttons.lac:SetGlow(state.next == 'Lacerate');
 	ButtonMash.buttons.frf:SetGlow(state.next == 'Faerie Fire');
-
 end;
 
 function ButtonMash.BearTank.GetState()
@@ -118,6 +131,7 @@ function ButtonMash.BearTank.GetState()
 		thrash = 0,
 		lacerate = 0,
 		ffire = 0,
+		sd_remain = 0
 	};
 
 
@@ -131,6 +145,17 @@ function ButtonMash.BearTank.GetState()
 		if (start == 0) then
 			out.maul = true;
 		end
+	end
+
+
+	--
+	-- if savage defense is up...
+	--
+
+	local name, _, _, _, _, _, expires = UnitBuff("player", "Savage Defense");
+
+	if (name) then
+		out.sd_remain = expires - GetTime();
 	end
 
 
@@ -153,10 +178,10 @@ function ButtonMash.BearTank.GetState()
 	-- coming next.
 	--
 
-	out.mangle = ButtonMash.BearTank.TimeUntil("Mangle");
-	out.thrash = ButtonMash.BearTank.TimeUntil("Thrash");
-	out.lacerate = ButtonMash.BearTank.TimeUntil("Lacerate");
-	out.ffire = ButtonMash.BearTank.TimeUntil("Faerie Fire");
+	out.mangle	= ButtonMash.BearTank.TimeUntil("Mangle");
+	out.thrash	= ButtonMash.BearTank.TimeUntil("Thrash");
+	out.lacerate	= ButtonMash.BearTank.TimeUntil("Lacerate");
+	out.ffire	= ButtonMash.BearTank.TimeUntil("Faerie Fire");
 
 	local time_until_wb_off = 0;
 	local time_until_th_off = 0;
