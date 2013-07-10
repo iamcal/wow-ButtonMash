@@ -65,9 +65,11 @@ function ButtonMash.BearTank.UpdateFrame()
 		alpha = 0.2;
 		ButtonMash.BearTank.RageLabel:SetAlpha(0.6);
 		ButtonMash.BearTank.HealthLabel:SetAlpha(0.6);
+		ButtonMash.BearTank.SDCD:SetAlpha(0.6);
 	else
 		ButtonMash.BearTank.RageLabel:SetAlpha(1);
 		ButtonMash.BearTank.HealthLabel:SetAlpha(1);
+		ButtonMash.BearTank.SDCD:SetAlpha(1);
 	end
 
 	local i;
@@ -94,6 +96,11 @@ function ButtonMash.BearTank.UpdateFrame()
 	end
 
 
+	-- main shot state + maul proc
+
+	local state = ButtonMash.BearTank.GetState();
+
+
 	-- SD label
 
 	if (state.sd_remain > 0) then
@@ -103,23 +110,25 @@ function ButtonMash.BearTank.UpdateFrame()
 	end
 
 
-	-- everything below here is only for active targets
+	-- set up glows
 
-	if (not has_viable_target) then
-		return;
+	if (has_viable_target) then
+
+		ButtonMash.buttons.mul:SetGlow(state.maul);
+
+		ButtonMash.buttons.man:SetGlow(state.next == 'Mangle');
+		ButtonMash.buttons.trs:SetGlow(state.next == 'Thrash');
+		ButtonMash.buttons.lac:SetGlow(state.next == 'Lacerate');
+		ButtonMash.buttons.frf:SetGlow(state.next == 'Faerie Fire');
+
+	else
+		ButtonMash.buttons.mul:SetGlow(false);
+
+		ButtonMash.buttons.man:SetGlow(false);
+		ButtonMash.buttons.trs:SetGlow(false);
+		ButtonMash.buttons.lac:SetGlow(false);
+		ButtonMash.buttons.frf:SetGlow(false);
 	end
-
-
-	-- main shot state + maul proc
-
-	local state = ButtonMash.BearTank.GetState();
-
-	ButtonMash.buttons.mul:SetGlow(state.maul);
-
-	ButtonMash.buttons.man:SetGlow(state.next == 'Mangle');
-	ButtonMash.buttons.trs:SetGlow(state.next == 'Thrash');
-	ButtonMash.buttons.lac:SetGlow(state.next == 'Lacerate');
-	ButtonMash.buttons.frf:SetGlow(state.next == 'Faerie Fire');
 end;
 
 function ButtonMash.BearTank.GetState()
