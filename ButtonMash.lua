@@ -558,6 +558,73 @@ function ButtonMash.GetCooldowns()
 	};	
 end
 
+function ButtonMash.TimeUntil(spell)
+
+	local start, duration, enabled = GetSpellCooldown(spell);
+	if (start>0 and duration>0) then
+		return start + duration - GetTime();
+	end
+	return 0;
+end
+
+function ButtonMash.PlayerBuffs()
+	return ButtonMash.Auras("player", "HELPFUL");
+end
+
+function ButtonMash.TargetDebuffs()
+	return ButtonMash.Auras("target", "HARMFUL");
+end
+
+function ButtonMash.Auras(unit, filter)
+
+	local out = {};
+	local t = GetTime();
+	local i;
+
+	for i=1,40 do
+		local expire,_,_,_,id = select(7, UnitAura(unit, i, filter));
+		if (id) then
+			if (expire) then
+				out[id] = expire - t;
+			else
+				out[id] = 99;
+			end
+		end
+	end
+
+	return out;
+end
+
+function ButtonMash.DumpAuras(unit, filter)
+	
+	local t = GetTime();
+	local i;
+
+	for i=1,40 do
+		local name,_,_,_,_,_,expire,_,_,_,id = UnitAura(unit, i, filter);
+		if (name) then
+			local r = 99;
+			if (expire) then r = expire - t; end
+			if (id) then
+				print(name.." (ID "..id..") lasts for "..r);
+			else
+				print(name.." (No ID) lasts for "..r);
+			end
+		end
+	end
+end
+
+function ButtonMash.IsSpellInRange(target_spell_id)
+
+        local _, _, offset, num_spells = GetSpellTabInfo(2);
+        for index = offset+1, num_spells+offset do
+		local spell_id = select(2, GetSpellBookItemInfo(index, "spell"));
+		if (spell_id == target_spell_id) then
+			return IsSpellInRange(index, "spell", "target"); 
+		end
+	end
+	return nil;
+end
 
 ButtonMash.EventFrame = CreateFrame("Frame");
 ButtonMash.EventFrame:Show();
