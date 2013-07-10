@@ -33,9 +33,7 @@ function ButtonMash.BearTank.CreateUI()
 
 	-- rage label
 
-	ButtonMash.BearTank.RageLabel = ButtonMash.Cover:CreateFontString(nil, "OVERLAY");
-	ButtonMash.BearTank.RageLabel:SetPoint("CENTER", ButtonMash.UIFrame, "TOPLEFT", (41*2)+20, -20);
-	ButtonMash.BearTank.RageLabel:SetFont([[Fonts\FRIZQT__.TTF]], 12, "OUTLINE");
+	ButtonMash.BearTank.RageLabel = ButtonMash.CreateLabel((41*2)+20, 20);
 	ButtonMash.BearTank.RageLabel:SetText("100");
 	ButtonMash.BearTank.RageLabel:SetTextColor(0,1,0,1);
 	ButtonMash.SetFontSize(ButtonMash.BearTank.RageLabel, 22);

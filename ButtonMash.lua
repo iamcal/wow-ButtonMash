@@ -19,10 +19,13 @@ ButtonMash.modules = {};
 
 ButtonMash.start_w = 200;
 ButtonMash.start_h = 200;
-ButtonMash.buttons = {};
 ButtonMash.misc_counter = 0;
 
+ButtonMash.buttons = {};
+ButtonMash.labels = {};
+
 ButtonMash.free_buttons = {};
+ButtonMash.free_labels = {};
 
 
 --
@@ -224,10 +227,26 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 	b.glow:SetPoint("TOPLEFT", b, "TOPLEFT", -w * 0.2, h * 0.2);
 	b.glow:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", w * 0.2, -h*0.2);
 
+	-- reset bound spell, in case we recycle a bound button into
+	-- a non-bound one.
+	b.bound_spell = nil;
+
 	b.short_id = short_id;
 	ButtonMash.buttons[short_id] = b;
 
 	return b;
+end
+
+function ButtonMash.CreateLabel(x, y)
+
+	local l = ButtonMash.GetLabel();
+
+	l:SetPoint("CENTER", ButtonMash.UIFrame, "TOPLEFT", x, 0-y);
+	l:Show();
+
+	table.insert(ButtonMash.labels, l);
+
+	return l;
 end
 
 function ButtonMash.DestroyControls()
@@ -244,7 +263,17 @@ function ButtonMash.DestroyControls()
 		ButtonMash.buttons[i]:SetParent(nil);		
 	end
 
+	for i in pairs(ButtonMash.labels) do
+
+		-- add to free labels list
+		table.insert(ButtonMash.free_labels, ButtonMash.labels[i]);
+
+		-- hide it
+		ButtonMash.labels[i]:Hide();
+	end
+
 	ButtonMash.buttons = {};
+	ButtonMash.labels = {};
 end
 
 function ButtonMash.GetButton()
@@ -365,6 +394,29 @@ function ButtonMash.GetButton()
 	end
 
 	return b;
+end
+
+function ButtonMash.GetLabel()
+
+	--
+	-- take one from the cache if we can
+	--
+
+	if (#ButtonMash.free_labels > 0) then
+		return table.remove(ButtonMash.free_labels);
+	end
+
+
+	--
+	-- need to create a new one
+	--
+
+	local l = ButtonMash.Cover:CreateFontString(nil, "OVERLAY");
+	l:SetFont([[Fonts\FRIZQT__.TTF]], 12, "OUTLINE");
+	l:SetText("");
+	l:SetTextColor(1,1,1,1);
+
+	return l;
 end
 
 function ButtonMash.CreateBoundButton(short_id, x, y, w, h, spell)
