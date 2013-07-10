@@ -22,6 +22,8 @@ ButtonMash.start_h = 200;
 ButtonMash.buttons = {};
 ButtonMash.misc_counter = 0;
 
+ButtonMash.free_buttons = {};
+
 
 --
 -- module registration
@@ -90,7 +92,7 @@ function ButtonMash.OnUpdate()
 			if (ButtonMash.current_module.DestroyUI) then
 				ButtonMash.current_module.DestroyUI();
 			end
-			ButtonMash.DestroyButtons();
+			ButtonMash.DestroyControls();
 			ButtonMash.UIFrame:Hide();
 		end
 
@@ -210,15 +212,61 @@ end
 
 function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 
+	local b = ButtonMash.GetButton();
+
+	b:SetParent(ButtonMash.UIFrame);
+	b:SetPoint("TOPLEFT", x, 0-y);
+	b:SetWidth(w);
+	b:SetHeight(h);
+	b:SetNormalTexture(texture);
+	b:Show();
+
+	b.glow:SetPoint("TOPLEFT", b, "TOPLEFT", -w * 0.2, h * 0.2);
+	b.glow:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", w * 0.2, -h*0.2);
+
+	b.short_id = short_id;
+	ButtonMash.buttons[short_id] = b;
+
+	return b;
+end
+
+function ButtonMash.DestroyControls()
+
+	local i;
+
+	for i in pairs(ButtonMash.buttons) do
+
+		-- add to free buttons list
+		table.insert(ButtonMash.free_buttons, ButtonMash.buttons[i]);
+
+		-- hide it
+		ButtonMash.buttons[i]:Hide();
+		ButtonMash.buttons[i]:SetParent(nil);		
+	end
+
+	ButtonMash.buttons = {};
+end
+
+function ButtonMash.GetButton()
+
+	--
+	-- take one from the cache if we can
+	--
+
+	if (#ButtonMash.free_buttons > 0) then
+		return table.remove(ButtonMash.free_buttons);
+	end
+
+
+	--
+	-- need to create a new one
+	--
+
 	ButtonMash.misc_counter = ButtonMash.misc_counter + 1;
 	local name = "ButtonMashBtn"..ButtonMash.misc_counter;
 
 	-- the actual button
 	local b = CreateFrame("Button", name, ButtonMash.UIFrame);
-	b:SetPoint("TOPLEFT", x, 0-y)
-	b:SetWidth(w)
-	b:SetHeight(h)
-	b:SetNormalTexture(texture);
 
 	function b:SetStateColor(col)
 		local tex = self:GetNormalTexture();
@@ -295,8 +343,6 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 	b.glow = CreateFrame("Frame", name.."_glow", UIParent, "ActionBarButtonSpellActivationAlert");
 	b.glow:SetParent(b);
 	b.glow:ClearAllPoints();
-	b.glow:SetPoint("TOPLEFT", b, "TOPLEFT", -w * 0.2, h * 0.2);
-	b.glow:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", w * 0.2, -h*0.2);
 	b.glow:Hide();
 	b.is_glowing = false;
 
@@ -317,8 +363,6 @@ function ButtonMash.CreateButton(short_id, x, y, w, h, texture)
 			end
 		end
 	end
-
-	ButtonMash.buttons[short_id] = b;
 
 	return b;
 end
@@ -369,24 +413,6 @@ function ButtonMash.OnClick(self, aButton)
 	if (aButton == "RightButton") then
 		print("show menu here!");
 	end
-end
-
-function ButtonMash.DestroyButtons()
-
-	--
-	-- this currently bloats if you constantly switch specs.
-	-- the solution is to keep a pool of free button frames.
-	--
-
-	local i;
-
-	for i in pairs(ButtonMash.buttons) do
-
-		ButtonMash.buttons[i]:Hide();
-		ButtonMash.buttons[i]:SetParent(nil);
-	end
-
-	ButtonMash.buttons = {};
 end
 
 function ButtonMash.SetButtonState(btn_id, state, spellName)
