@@ -14,3 +14,4 @@ class_rogue_combat.lua
 class_warrior_prot.lua
 class_druid_bear.lua
 class_druid_moonkin.lua
+class_warlock_destro.lua
