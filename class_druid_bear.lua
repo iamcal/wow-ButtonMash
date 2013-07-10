@@ -31,12 +31,17 @@ function ButtonMash.BearTank.CreateUI()
 	ButtonMash.CreateBoundButton('frf', 41*4, 41, 40, 40, ButtonMash.BearTank.FAERIE_FIRE);
 
 
-	-- rage label
+	-- labels
 
 	ButtonMash.BearTank.RageLabel = ButtonMash.CreateLabel((41*2)+20, 20);
 	ButtonMash.BearTank.RageLabel:SetText("100");
 	ButtonMash.BearTank.RageLabel:SetTextColor(0,1,0,1);
-	ButtonMash.SetFontSize(ButtonMash.BearTank.RageLabel, 22);
+	ButtonMash.SetFontSize(ButtonMash.BearTank.RageLabel, 21);
+
+	ButtonMash.BearTank.HealthLabel = ButtonMash.CreateLabel((41*0)+20, 20);
+	ButtonMash.BearTank.HealthLabel:SetText("100");
+	ButtonMash.BearTank.HealthLabel:SetTextColor(0,1,0,1);
+	ButtonMash.SetFontSize(ButtonMash.BearTank.HealthLabel, 21);
 end
 
 function ButtonMash.BearTank.DestroyUI()
@@ -53,9 +58,11 @@ function ButtonMash.BearTank.UpdateFrame()
 	end
 	if (not has_viable_target) then
 		alpha = 0.2;
-		ButtonMash.BearTank.RageLabel:SetAlpha(0.4);
+		ButtonMash.BearTank.RageLabel:SetAlpha(0.6);
+		ButtonMash.BearTank.HealthLabel:SetAlpha(0.6);
 	else
 		ButtonMash.BearTank.RageLabel:SetAlpha(1);
+		ButtonMash.BearTank.HealthLabel:SetAlpha(1);
 	end
 
 	local i;
@@ -63,6 +70,11 @@ function ButtonMash.BearTank.UpdateFrame()
 		ButtonMash.buttons[i]:SetAlpha(alpha);
 	end
 
+
+	local hp = math.ceil(100 * UnitHealth("player") / UnitHealthMax("player"));
+	if (hp == 100) then hp = "-"; end
+
+	ButtonMash.BearTank.HealthLabel:SetText(hp);
 	ButtonMash.BearTank.RageLabel:SetText(UnitPower("player", 1));
 
 
@@ -94,7 +106,6 @@ function ButtonMash.BearTank.UpdateFrame()
 	ButtonMash.buttons.trs:SetGlow(state.next == 'Thrash');
 	ButtonMash.buttons.lac:SetGlow(state.next == 'Lacerate');
 	ButtonMash.buttons.frf:SetGlow(state.next == 'Faerie Fire');
-
 
 end;
 
