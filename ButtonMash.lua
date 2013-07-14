@@ -626,6 +626,17 @@ function ButtonMash.IsSpellInRange(target_spell_id)
 	return nil;
 end
 
+function ButtonMash.CanCast(spell_id, within_time)
+
+	local t = ButtonMash.TimeUntil(spell_id);
+
+	if (t <= within_time) then
+		return true;
+	end
+
+	return false;
+end
+
 ButtonMash.EventFrame = CreateFrame("Frame");
 ButtonMash.EventFrame:Show();
 ButtonMash.EventFrame:SetScript("OnEvent", ButtonMash.OnEvent);
