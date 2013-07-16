@@ -16,3 +16,5 @@
  * Added prot warrior module
  * Added guardian druid module
  * Added balance druid module
+ * Added destro warlock module
+ * Added ret paladin module
