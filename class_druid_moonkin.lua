@@ -15,7 +15,7 @@ ButtonMash.Moonkin.INNERVATE		= 29166;
 ButtonMash.Moonkin.MIRROR_IMAGE		= 110621;
 
 ButtonMash.Moonkin.ECLIPSE_LUNAR	= 48518;
-ButtonMash.Moonkin.ECLIPSE_SOLAR	= 0;
+ButtonMash.Moonkin.ECLIPSE_SOLAR	= 48517;
 
 ButtonMash.Moonkin.SUNFIRE_NAME = GetSpellInfo(ButtonMash.Moonkin.SUNFIRE);
 
@@ -96,12 +96,16 @@ function ButtonMash.Moonkin.UpdateFrame()
 		end
 	end
 
+	if (state.favored == 'starfire') then ButtonMash.buttons.wrath:SetAlpha(0.4); end
+	if (state.favored == 'wrath'   ) then ButtonMash.buttons.starfire:SetAlpha(0.4); end
+
 end;
 
 function ButtonMash.Moonkin.GetState()
 
 	local out = {
 		next = '',
+		favored = '',
 	};
 
 
@@ -139,6 +143,25 @@ function ButtonMash.Moonkin.GetState()
 	end
 
 
+	-- favoring wrath or starfire?
+
+	if (eclipse_solar) then
+
+		out.favored = 'wrath';
+
+	elseif (eclipse_lunar) then
+
+		out.favored = 'starfire';
+
+	elseif (pow > 0) then
+
+		out.favored = 'starfire';
+
+	else
+		out.favored = 'wrath';
+	end
+
+
 	-- main spell priority
 
 	if (sunfire_remain < 1.5) then
@@ -157,20 +180,8 @@ function ButtonMash.Moonkin.GetState()
 
 		out.next = 'starfall';
 
-	elseif (eclipse_solar) then
-
-		out.next = 'wrath';
-
-	elseif (eclipse_lunar) then
-
-		out.next = 'starfire';
-
-	elseif (pow > 0) then
-
-		out.next = 'starfire';
-
 	else
-		out.next = 'wrath';
+		out.next = out.favored;
 	end
 
 	return out;
